@@ -1,0 +1,92 @@
+Lexical Analyser :
+
+ID=ID+ID;
+IF(ID<ID)
+{
+	ID=ID+Num;
+	ID=ID*Num;
+	ID=ID-ID;
+}
+ELSE
+{
+	ID=ID+Num;
+	ID=Num-ID;
+	ID=ID+ID;
+}
+
+Syntax Checking : No Syntax Error
+
+Intermediate Code:
+
+   t1=b+c
+   a=t1
+   IF (a<b) GOTO L1
+   GOTO L2
+L1:   t2=b+0
+   a=t2
+   t3=a*1
+   b=t3
+   t4=a-b
+   c=t4
+   GOTO L3
+L2:   t5=b+1
+   a=t5
+   t6=0-a
+   b=t6
+   t7=a+b
+   c=t7
+L3:
+
+
+Optimized Code:
+
+   t1=b+c
+   a=t1
+   IF (a<b) GOTO L1
+   GOTO L2
+L1:   t2=b
+   a=t2
+   t3=a
+   b=t3
+   t4=a-b
+   c=t4
+   GOTO L3
+L2:   t5=b+1
+   a=t5
+   t6=-a
+   b=t6
+   t7=a+b
+   c=t7
+L3:
+
+
+Generated Code:
+
+   MOV b,R0
+   ADD c,R0
+   MOV R0,t1
+   MOV t1,a
+   IF (a<b) GOTO L1
+   GOTO L2
+L1:   MOV b,t2
+   MOV t2,a
+   MOV a,t3
+   MOV t3,b
+   MOV a,R1
+   SUB b,R1
+   MOV R1,t4
+   MOV t4,c
+   GOTO L3
+L2:   MOV b,R2
+   ADD #1,R2
+   MOV R2,t5
+   MOV t5,a
+   MOV a,R3
+   NEG R3
+   MOV R3,t6
+   MOV t6,b
+   MOV a,R4
+   ADD b,R4
+   MOV R4,t7
+   MOV t7,c
+L3:
